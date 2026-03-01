@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="refresh" content="10;url=https://obscuraworks.org" />
+  <title>Kami Telah Pindah — ObscuraWorks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #110d08;
+      --fg: #f0ebe3;
+      --muted: #6b6257;
+      --orange: #f7931a;
+      --amber: #fbbf24;
+      --orange-dim: rgba(247,147,26,0.18);
+      --orange-border: rgba(247,147,26,0.22);
+      --radius: 14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: 'Space Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Grid background ── */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .grid-flat {
+      position: absolute;
+      inset: 0;
+      opacity: 0.07;
+      background-image:
+        linear-gradient(rgba(247,147,26,0.9) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(247,147,26,0.9) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .grid-perspective {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50%;
+      opacity: 0.12;
+      background-image:
+        linear-gradient(rgba(247,147,26,1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(247,147,26,1) 1px, transparent 1px);
+      background-size: 80px 80px;
+      transform: perspective(600px) rotateX(60deg);
+      transform-origin: bottom center;
+    }
+    .glow-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 900px; height: 500px;
+      border-radius: 50%;
+      background: rgba(247,147,26,0.10);
+      filter: blur(120px);
+    }
+    .glow-fire {
+      position: absolute;
+      top: 40%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px; height: 300px;
+      border-radius: 50%;
+      background: rgba(251,191,36,0.18);
+      filter: blur(80px);
+    }
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      opacity: 0.025;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.8) 2px, rgba(0,0,0,0.8) 4px);
+    }
+
+    /* ── Floating orbs ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .orb-1 {
+      top: 15%; left: 8%;
+      width: 12px; height: 12px;
+      background: rgba(251,191,36,0.6);
+      box-shadow: 0 0 20px 6px rgba(251,191,36,0.4);
+      animation: float1 8s ease-in-out infinite;
+    }
+    .orb-2 {
+      top: 25%; right: 12%;
+      width: 8px; height: 8px;
+      background: rgba(251,146,60,0.7);
+      box-shadow: 0 0 16px 4px rgba(251,146,60,0.5);
+      animation: float2 6s ease-in-out infinite 1s;
+    }
+    .orb-3 {
+      bottom: 30%; left: 15%;
+      width: 16px; height: 16px;
+      background: rgba(234,179,8,0.4);
+      box-shadow: 0 0 24px 8px rgba(234,179,8,0.3);
+      animation: float3 10s ease-in-out infinite 2s;
+    }
+    .orb-4 {
+      bottom: 25%; right: 18%;
+      width: 10px; height: 10px;
+      background: rgba(253,186,116,0.6);
+      box-shadow: 0 0 18px 5px rgba(253,186,116,0.4);
+      animation: float4 7s ease-in-out infinite 3s;
+    }
+
+    @keyframes float1 {
+      0%,100% { transform: translateY(-20px) translateX(-10px); opacity: 0.3; }
+      50%      { transform: translateY(20px) translateX(10px);  opacity: 0.6; }
+    }
+    @keyframes float2 {
+      0%,100% { transform: translateY(15px) translateX(8px);  opacity: 0.4; }
+      50%      { transform: translateY(-15px) translateX(-8px); opacity: 0.7; }
+    }
+    @keyframes float3 {
+      0%,100% { transform: translateY(-12px); opacity: 0.2; }
+      50%      { transform: translateY(18px);  opacity: 0.5; }
+    }
+    @keyframes float4 {
+      0%,100% { transform: translateY(10px) translateX(-5px); opacity: 0.3; }
+      50%      { transform: translateY(-20px) translateX(5px); opacity: 0.55; }
+    }
+
+    /* ── Main content ── */
+    .container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 1.5rem;
+      max-width: 680px;
+      width: 100%;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(249,115,22,0.30);
+      background: rgba(249,115,22,0.08);
+      color: rgba(253,186,116,1);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.6s ease 0.1s both;
+    }
+    .ping-dot {
+      position: relative;
+      width: 8px; height: 8px;
+    }
+    .ping-dot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #fb923c;
+      animation: ping 1.2s ease-out infinite;
+    }
+    .ping-dot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #fb923c;
+    }
+    @keyframes ping {
+      0%   { transform: scale(1); opacity: 0.75; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    /* Headline */
+    .headline {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.2rem, 7vw, 4rem);
+      line-height: 1.05;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.8s ease 0.2s both;
+    }
+    .headline-top { color: var(--fg); display: block; }
+    .headline-gradient {
+      display: block;
+      background: linear-gradient(135deg, #f7931a 0%, #fbbf24 40%, #f97316 70%, #ef4444 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 24px rgba(247,147,26,0.5));
+    }
+
+    /* Subtitle */
+    .subtitle {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: rgba(161,161,170,1);
+      margin-bottom: 2.5rem;
+      max-width: 480px;
+      animation: fadeUp 0.8s ease 0.35s both;
+    }
+
+    /* Countdown */
+    .countdown-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.8s ease 0.45s both;
+    }
+    .countdown-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .countdown-number {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3.5rem, 12vw, 6rem);
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(135deg, #f7931a, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(247,147,26,0.6));
+    }
+    .progress-bar-wrap {
+      width: 220px;
+      height: 3px;
+      background: rgba(247,147,26,0.15);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #f7931a, #fbbf24);
+      border-radius: 99px;
+      width: 100%;
+      transform-origin: left;
+      animation: progress 10s linear forwards;
+    }
+    @keyframes progress {
+      from { transform: scaleX(1); }
+      to   { transform: scaleX(0); }
+    }
+
+    /* URL card */
+    .url-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 28px;
+      border-radius: var(--radius);
+      border: 1px solid var(--orange-border);
+      background: rgba(247,147,26,0.06);
+      backdrop-filter: blur(12px);
+      margin-bottom: 2.5rem;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+      text-decoration: none;
+      cursor: pointer;
+      animation: fadeUp 0.8s ease 0.55s both;
+    }
+    .url-card:hover {
+      border-color: rgba(247,147,26,0.5);
+      background: rgba(247,147,26,0.12);
+      transform: scale(1.02);
+    }
+    .url-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #f7931a, #fbbf24);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .url-icon svg { width: 18px; height: 18px; color: #000; }
+    .url-text { text-align: left; }
+    .url-text small {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .url-text strong {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f7931a, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .arrow {
+      margin-left: auto;
+      color: rgba(253,186,116,0.6);
+      font-size: 1.25rem;
+      transition: transform 0.2s;
+    }
+    .url-card:hover .arrow { transform: translateX(4px); }
+
+    /* CTA button */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: #000;
+      background: linear-gradient(135deg, #f7931a, #fbbf24, #f97316);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 0.8s ease 0.65s both;
+    }
+    .btn-primary:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 40px rgba(247,147,26,0.55);
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 680px;
+      margin-top: 3rem;
+      padding: 1.5rem 1.5rem 0;
+      animation: fadeUp 0.8s ease 0.8s both;
+    }
+
+    .footer-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(247,147,26,0.25), transparent);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-bottom: 1.5rem;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-logo-icon {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #f7931a, #fbbf24);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .footer-logo-icon svg { width: 14px; height: 14px; }
+    .footer-logo-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--fg);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.25rem;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: rgba(253,186,116,1); }
+
+    .footer-copy {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Bottom fade ── */
+    .bottom-fade {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(to top, var(--bg), transparent);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0e0a06; }
+    ::-webkit-scrollbar-thumb { background: rgba(247,147,26,0.19); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(247,147,26,0.38); }
+
+    ::selection { background: rgba(247,147,26,0.25); color: #fff; }
+
+    @media (max-width: 480px) {
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="grid-bg">
+    <div class="grid-flat"></div>
+    <div class="grid-perspective"></div>
+    <div class="glow-center"></div>
+    <div class="glow-fire"></div>
+    <div class="scanlines"></div>
+  </div>
+
+  <!-- Floating orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+
+  <!-- Main -->
+  <main class="container">
+
+    <!-- Badge -->
+    <div class="badge">
+      <span class="ping-dot"></span>
+      PINDAH DOMAIN
+    </div>
+
+    <!-- Headline -->
+    <h1 class="headline">
+      <span class="headline-top">Kami Telah</span>
+      <span class="headline-gradient">Berpindah.</span>
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="subtitle">
+      Domain kami telah berubah secara permanen. Anda akan diarahkan otomatis ke alamat baru kami dalam beberapa detik.
+    </p>
+
+    <!-- Countdown -->
+    <div class="countdown-wrap">
+      <span class="countdown-label">Pindah otomatis dalam</span>
+      <span class="countdown-number" id="count">10</span>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar"></div>
+      </div>
+    </div>
+
+    <!-- URL card -->
+    <a class="url-card" href="https://obscuraworks.org">
+      <div class="url-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="url-text">
+        <small>URL Baru Kami</small>
+        <strong>obscuraworks.org</strong>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <!-- Manual CTA -->
+    <a class="btn-primary" href="https://obscuraworks.org">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+      Pergi Sekarang
+    </a>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-divider"></div>
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <span class="footer-logo-name">ObscuraWorks</span>
+      </div>
+
+      <ul class="footer-links">
+        <li><a href="https://obscuraworks.org/docs">Docs</a></li>
+        <li><a href="https://obscuraworks.org/blog">Blog</a></li>
+        <li><a href="https://obscuraworks.org/status">Status</a></li>
+        <li><a href="https://obscuraworks.org/contact">Kontak</a></li>
+      </ul>
+
+      <span class="footer-copy">© 2025 ObscuraWorks</span>
+    </div>
+  </footer>
+
+  <div class="bottom-fade"></div>
+
+  <script>
+    let n = 10;
+    const el = document.getElementById('count');
+    const timer = setInterval(() => {
+      n--;
+      el.textContent = n;
+      if (n <= 0) {
+        clearInterval(timer);
+        window.location.href = 'https://obscuraworks.org';
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
