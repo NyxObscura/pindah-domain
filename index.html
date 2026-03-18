@@ -27,19 +27,20 @@
     }
 
     body {
-      min-height: 100vh;
-      min-height: 100dvh;
-      background-color: var(--bg);
-      color: var(--fg);
-      font-family: 'Space Mono', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow-x: hidden;
-      overflow-y: auto;
-      position: relative;
-    }
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: 'Space Mono', monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;  /* ← */
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+}
+
 
     /* ── Grid background ── */
     .grid-bg {
@@ -149,19 +150,19 @@
 
     /* ── Main content ── */
     .container {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 3rem 1.5rem 1.5rem;
-      max-width: 680px;
-      width: 100%;
-      flex: 1;
-      justify-content: center;
-      animation: fadeUp 0.8s ease both;
-    }
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 1.5rem 3rem;   /* ← lebih lega */
+  max-width: 680px;
+  width: 100%;
+  /* flex: 1 → dihapus */
+  /* justify-content: center → dihapus */
+  animation: fadeUp 0.8s ease both;
+}
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(30px); }
